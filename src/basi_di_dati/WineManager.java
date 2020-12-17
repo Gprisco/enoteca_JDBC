@@ -23,24 +23,20 @@ public class WineManager {
 	 * @return A ResultSet containing all the rows from the wine table
 	 */
 	public Wine[] getWines() {
-		Statement stmt = null;
-		ResultSet rs = null;
-
 		List<Wine> wines = new ArrayList<Wine>();
 
 		try {
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM wine");
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM wine");
 
 			while (rs.next()) {
-				wines.add(new Wine(rs.getString("wine"), rs.getInt("vintage"), rs.getInt("availability"),
-						rs.getFloat("price"), rs.getInt("wineryId"), rs.getInt("winefamilyId")));
+				wines.add(new Wine(rs, false));
 			}
 		} catch (SQLException ex) {
 			// handle any errors
 			Helpers.handleSQLException(ex);
 		}
-				
+
 		return wines.toArray(new Wine[wines.size()]);
 	}
 
@@ -48,10 +44,10 @@ public class WineManager {
 	 * 
 	 * @param name    The name of the wine to fetch
 	 * @param vintage The vintage of the wine to fetch
-	 * @return A ResultSet containing one single Winefamily
+	 * @return The Wine fetched from db or null
 	 */
-	public ResultSet getWine(String name, Integer vintage) {
-		ResultSet rs = null;
+	public Wine getWine(String name, Integer vintage) {
+		Wine wine = null;
 
 		try {
 			String sql = "SELECT * FROM wine " + "INNER JOIN winery ON winery.wineryId = wine.wineryId "
@@ -66,14 +62,17 @@ public class WineManager {
 			stmt.setString(1, name.toLowerCase());
 			stmt.setInt(2, vintage);
 
-			rs = stmt.executeQuery();
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				wine = new Wine(rs, true);
+			}
 		} catch (SQLException ex) {
 			// handle any errors
 			Helpers.handleSQLException(ex);
 		}
 
-		return rs;
-
+		return wine;
 	}
 
 	/**
@@ -116,13 +115,13 @@ public class WineManager {
 
 	/**
 	 * 
-	 * @param name         The name of the wine to update
+	 * @param wine         The name of the wine to update
 	 * @param vintage      The vintage of the wine to update
 	 * @param availability The new availability of the wine (this parameter will be
 	 *                     saved in the database)
 	 * @return The number of rows which have been updated
 	 */
-	public Integer updateWineAvailability(String name, Integer vintage, Integer availability) {
+	public Integer updateWineAvailability(String wine, Integer vintage, Integer availability) {
 		Integer insertedRows = null;
 
 		try {
@@ -130,8 +129,33 @@ public class WineManager {
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, availability);
-			stmt.setString(2, name);
+			stmt.setString(2, wine);
 			stmt.setInt(3, vintage);
+
+			insertedRows = stmt.executeUpdate();
+		} catch (SQLException ex) {
+			// handle any errors
+			Helpers.handleSQLException(ex);
+		}
+
+		return insertedRows;
+	}
+
+	/**
+	 * 
+	 * @param wine    The string describing the name of the wine
+	 * @param vintage The vintage of the wine
+	 * @return The number of rows which have been deleted
+	 */
+	public Integer deleteWine(String wine, Integer vintage) {
+		Integer insertedRows = null;
+
+		try {
+			String sql = "DELETE FROM wine WHERE wine = ? AND vintage = ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, wine);
+			stmt.setInt(2, vintage);
 
 			insertedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {

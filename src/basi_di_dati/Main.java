@@ -20,6 +20,12 @@ public class Main {
 			for(int i = 0; i < wines.length; i++) {
 				System.out.println(wines[i].wine);
 			}
+			
+			Winefamily[] winefamilies = winefamilyMng.getWinefamilies();
+			
+			for(int i = 0; i < winefamilies.length; i++) {
+				System.out.println(winefamilies[i].winefamily);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

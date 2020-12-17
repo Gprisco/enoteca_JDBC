@@ -1,12 +1,17 @@
 package basi_di_dati;
 
+import basi_di_dati.Models.*;
+import basi_di_dati.Helpers.*;
+
 import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import basi_di_dati.Helpers.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WinefamilyManager {
 	Connection conn;
@@ -19,19 +24,25 @@ public class WinefamilyManager {
 	 * 
 	 * @return ResultSet containing all the rows from winefamily table
 	 */
-	public ResultSet getWinefamilies() {
+	public Winefamily[] getWinefamilies() {
 		Statement stmt = null;
 		ResultSet rs = null;
+
+		List<Winefamily> winefamilies = new ArrayList<Winefamily>();
 
 		try {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT * FROM winefamily");
+
+			while (rs.next()) {
+				winefamilies.add(new Winefamily(rs));
+			}
 		} catch (SQLException ex) {
 			// handle any errors
 			Helpers.handleSQLException(ex);
 		}
 
-		return rs;
+		return winefamilies.toArray(new Winefamily[winefamilies.size()]);
 	}
 
 	/**
@@ -39,8 +50,8 @@ public class WinefamilyManager {
 	 * @param winefamilyId The ID of the winefamily to fetch
 	 * @return A ResultSet containing one single Winefamily
 	 */
-	public ResultSet getWinefamily(Integer winefamilyId) {
-		ResultSet rs = null;
+	public Winefamily getWinefamily(Integer winefamilyId) {
+		Winefamily winefamily = null;
 
 		try {
 			String sql = "SELECT * FROM winefamily WHERE winefamilyId = ?";
@@ -48,13 +59,17 @@ public class WinefamilyManager {
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, winefamilyId);
 
-			rs = stmt.executeQuery();
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				winefamily = new Winefamily(rs);
+			}
 		} catch (SQLException ex) {
 			// handle any errors
 			Helpers.handleSQLException(ex);
 		}
 
-		return rs;
+		return winefamily;
 	}
 
 	/**
@@ -80,6 +95,29 @@ public class WinefamilyManager {
 			stmt.setInt(3, winetypeId.getValue());
 			stmt.setInt(4, winedenomId.getValue());
 			stmt.setInt(5, regionId);
+
+			insertedRows = stmt.executeUpdate();
+		} catch (SQLException ex) {
+			// handle any errors
+			Helpers.handleSQLException(ex);
+		}
+
+		return insertedRows;
+	}
+
+	/**
+	 * 
+	 * @param winefamilyId The id of the winefamily to delete
+	 * @return The number of rows which have been deleted
+	 */
+	public Integer deleteWinefamily(Integer winefamilyId) {
+		Integer insertedRows = null;
+
+		try {
+			String sql = "DELETE FROM winefamily WHERE winefamilyId = ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, winefamilyId);
 
 			insertedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
