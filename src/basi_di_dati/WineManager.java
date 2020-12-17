@@ -143,6 +143,34 @@ public class WineManager {
 
 	/**
 	 * 
+	 * @param wine    The name of the wine to update
+	 * @param vintage The vintage of the wine to update
+	 * @param price   The new price of the wine (this parameter will be saved in the
+	 *                database)
+	 * @return The number of rows which have been updated
+	 */
+	public Integer updateWinePrice(String wine, Integer vintage, Float price) {
+		Integer insertedRows = null;
+
+		try {
+			String sql = "UPDATE wine SET price = ? WHERE wine = ? AND vintage = ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setFloat(1, price);
+			stmt.setString(2, wine);
+			stmt.setInt(3, vintage);
+
+			insertedRows = stmt.executeUpdate();
+		} catch (SQLException ex) {
+			// handle any errors
+			Helpers.handleSQLException(ex);
+		}
+
+		return insertedRows;
+	}
+
+	/**
+	 * 
 	 * @param wine    The string describing the name of the wine
 	 * @param vintage The vintage of the wine
 	 * @return The number of rows which have been deleted
