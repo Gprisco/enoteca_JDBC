@@ -34,7 +34,7 @@ public class Models {
 				e.printStackTrace();
 			}
 		}
-
+		
 		public String toStringTest() {
 			return "Vino: " + this.wine + "\n" + "Annata: " + this.vintage.toString() + "\n" + "Prezzo: "
 					+ this.price.toString() + "\n" + "Bottiglie: " + this.availability.toString() + "\n" + "wineryId: "
