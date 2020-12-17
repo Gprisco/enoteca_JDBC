@@ -82,13 +82,13 @@ public class WineManager {
 	 *                     produced
 	 * @param availability An Integer representing how many bottles the wine seller
 	 *                     has
-	 * @param price        A Floating point number describing the price of the
+	 * @param price        A number describing the price of the
 	 *                     bottle
 	 * @param wineryId     The ID of the related winery
 	 * @param winefamilyId The ID of the related winefamily
 	 * @return An Integer describing the number of rows which have been created
 	 */
-	public Integer createWine(String name, Integer vintage, Integer availability, Float price, Integer wineryId,
+	public Integer createWine(String name, Integer vintage, Integer availability, Integer price, Integer wineryId,
 			Integer winefamilyId) {
 		Integer insertedRows = null;
 
@@ -100,7 +100,7 @@ public class WineManager {
 			stmt.setString(1, name);
 			stmt.setInt(2, vintage);
 			stmt.setInt(3, availability);
-			stmt.setFloat(4, price);
+			stmt.setInt(4, price);
 			stmt.setInt(5, wineryId);
 			stmt.setInt(6, winefamilyId);
 
