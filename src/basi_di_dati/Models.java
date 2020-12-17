@@ -15,8 +15,9 @@ public class Models {
 		public Integer wineryId;
 		public Integer winefamilyId;
 		public Winefamily winefamily = null;
+		public Winery winery = null;
 
-		public Wine(ResultSet rs, Boolean fetchWinefamily) {
+		public Wine(ResultSet rs, Boolean fetchRelations) {
 			try {
 				this.wine = rs.getString("wine");
 				this.vintage = rs.getInt("vintage");
@@ -25,13 +26,14 @@ public class Models {
 				this.wineryId = rs.getInt("wineryId");
 				this.winefamilyId = rs.getInt("winefamilyId");
 
-				if (fetchWinefamily) {
+				if (fetchRelations) {
 					this.winefamily = new Winefamily(rs);
+					this.winery = new Winery(rs);
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		}
+		}		
 	}
 
 	public static class Winefamily {
@@ -53,6 +55,26 @@ public class Models {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public static class Winery {
+		public Integer wineryId;
+		public String winery;
+		public String address;
+		public String telephone;
+
+		public Winery(ResultSet rs) {
+			try {
+				this.wineryId = rs.getInt("wineryId");
+				this.winery = rs.getString("winery");
+				this.address = rs.getString("address");
+				this.telephone = rs.getString("telephone");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 	}
 }

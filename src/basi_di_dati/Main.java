@@ -1,9 +1,7 @@
 package basi_di_dati;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 
-import basi_di_dati.Helpers.*;
 import basi_di_dati.Models.*;
 
 public class Main {
@@ -14,18 +12,10 @@ public class Main {
 
 			WineManager wineMng = new WineManager(conn);
 			WinefamilyManager winefamilyMng = new WinefamilyManager(conn);
+			WineryManager wineryMng = new WineryManager(conn);
 
-			Wine[] wines = wineMng.getWines();
-
-			for(int i = 0; i < wines.length; i++) {
-				System.out.println(wines[i].wine);
-			}
+			System.out.println("---- TEST SUITE -----");
 			
-			Winefamily[] winefamilies = winefamilyMng.getWinefamilies();
-			
-			for(int i = 0; i < winefamilies.length; i++) {
-				System.out.println(winefamilies[i].winefamily);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
