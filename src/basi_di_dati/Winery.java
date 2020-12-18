@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Winery extends Model {
-	public Integer wineryId;
+	private Integer wineryId;
 	public String winery;
 	public String address;
 	public String telephone;
@@ -24,6 +24,10 @@ public class Winery extends Model {
 		}
 
 	}
+	
+	public Integer getId() {
+		return wineryId;
+	}
 
 	/**
 	 * 
@@ -34,7 +38,7 @@ public class Winery extends Model {
 
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM winery");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM winery ORDER BY wineryId DESC LIMIT 3");
 
 			while (rs.next()) {
 				wineries.add(new Winery(rs));
@@ -81,7 +85,7 @@ public class Winery extends Model {
 	 * @param telephone The telephone number as a string of the winery to create
 	 * @return The number of rows which have been created
 	 */
-	public static Integer createWinery(String winery, String address, String telephone) {
+	public static Integer create(String winery, String address, String telephone) {
 		Integer insertedRows = null;
 
 		try {
@@ -106,8 +110,8 @@ public class Winery extends Model {
 	 * @param wineryId The id of the winery to delete
 	 * @return The number of rows which have been deleted
 	 */
-	public Integer destroy(Integer wineryId) {
-		Integer insertedRows = null;
+	public Integer destroy() {
+		Integer deletedRows = null;
 
 		try {
 			String sql = "DELETE FROM winery WHERE wineryId = ?";
@@ -115,12 +119,17 @@ public class Winery extends Model {
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, wineryId);
 
-			insertedRows = stmt.executeUpdate();
+			deletedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
 			Helpers.handleSQLException(ex);
 		}
 
-		return insertedRows;
+		return deletedRows;
+	}
+
+	public String toString() {
+		return "\n\nwineryId:\t\t" + wineryId.toString() + "\nWinery:\t\t\t" + winery + "\nIndirizzo:\t\t" + address
+				+ "\nTelefono:\t\t" + telephone;
 	}
 }

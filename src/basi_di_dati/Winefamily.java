@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Winefamily extends Model {
-	public Integer winefamilyId;
+	private Integer winefamilyId;
 	public String winefamily;
 	public Winecolor winecolor;
 	public Winetype winetype;
@@ -30,6 +30,10 @@ public class Winefamily extends Model {
 			e.printStackTrace();
 		}
 	}
+	
+	public Integer getId() {
+		return winefamilyId;
+	}
 
 	/**
 	 * 
@@ -43,7 +47,7 @@ public class Winefamily extends Model {
 
 		try {
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM winefamily");
+			rs = stmt.executeQuery("SELECT * FROM winefamily ORDER BY winefamilyId DESC LIMIT 3");
 
 			while (rs.next()) {
 				winefamilies.add(new Winefamily(rs));
@@ -92,7 +96,7 @@ public class Winefamily extends Model {
 	 * @param regionId    The ID of the region of the winefamily's wines
 	 * @return An Integer describing the number of rows which have been created
 	 */
-	public static Integer createWinefamily(String name, Winecolor winecolorId, Winetype winetypeId,
+	public static Integer create(String name, Winecolor winecolorId, Winetype winetypeId,
 			Winedenom winedenomId, Integer regionId) {
 		Integer insertedRows = null;
 
@@ -122,7 +126,7 @@ public class Winefamily extends Model {
 	 * @return The number of rows which have been deleted
 	 */
 	public Integer destroy() {
-		Integer insertedRows = null;
+		Integer deletedRows = null;
 
 		try {
 			String sql = "DELETE FROM winefamily WHERE winefamilyId = ?";
@@ -130,12 +134,17 @@ public class Winefamily extends Model {
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, winefamilyId);
 
-			insertedRows = stmt.executeUpdate();
+			deletedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
 			Helpers.handleSQLException(ex);
 		}
 
-		return insertedRows;
+		return deletedRows;
+	}
+
+	public String toString() {
+		return "\nwinefamilyId:\t\t" + winefamilyId.toString() + "\nWinefamily:\t\t" + winefamily + "\nColore:\t\t\t" + winecolor
+				+ "\nTipologia:\t\t" + winetype + "\nDenominazione:\t\t" + winedenom;
 	}
 }

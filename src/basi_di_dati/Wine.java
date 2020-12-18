@@ -9,14 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Wine extends Model {
-	public String wine;
-	public Integer vintage;
+	private String wine;
+	private Integer vintage;
 	public Integer availability;
 	public Integer price;
 	public Integer wineryId;
 	public Integer winefamilyId;
 	public Winefamily winefamily = null;
 	public Winery winery = null;
+	private List<WineWinegrape> winegrapes = new ArrayList<WineWinegrape>();
 
 	public Wine(ResultSet rs, Boolean fetchRelations) {
 		try {
@@ -30,16 +31,23 @@ public class Wine extends Model {
 			if (fetchRelations) {
 				this.winefamily = new Winefamily(rs);
 				this.winery = new Winery(rs);
+				winegrapes.add(new WineWinegrape(rs));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public String toStringTest() {
-		return "Vino: " + this.wine + "\n" + "Annata: " + this.vintage.toString() + "\n" + "Prezzo: "
-				+ this.price.toString() + "\n" + "Bottiglie: " + this.availability.toString() + "\n" + "wineryId: "
-				+ this.wineryId.toString() + "\n" + "winefamilyId: " + this.winefamilyId.toString();
+	public String getWine() {
+		return wine;
+	}
+
+	public Integer getVintage() {
+		return vintage;
+	}
+
+	public WineWinegrape[] getWinegrapes() {
+		return winegrapes.toArray(new WineWinegrape[winegrapes.size()]);
 	}
 
 	/**
@@ -74,13 +82,19 @@ public class Wine extends Model {
 		Wine wine = null;
 
 		try {
+			// Faccio un'intersezione con tutte le tabell tranne con winegrape con cui
+			// faccio un left join al fine di avere comunque tutti i dati del vino anche se
+			// non ha l'uvaggio registrato
 			String sql = "SELECT * FROM wine " + "INNER JOIN winery ON winery.wineryId = wine.wineryId "
 					+ "INNER JOIN winefamily ON winefamily.winefamilyId = wine.winefamilyId "
 					+ "INNER JOIN winecolor ON winecolor.winecolorId = winefamily.winecolorId "
 					+ "INNER JOIN winetype ON winetype.winetypeId = winefamily.winetypeId "
 					+ "INNER JOIN winedenom ON winedenom.winedenomId = winefamily.winedenomId "
 					+ "INNER JOIN region ON region.regionId = winefamily.regionId "
-					+ "INNER JOIN country ON region.countryId = country.countryId " + "WHERE wine = ? AND vintage = ?";
+					+ "INNER JOIN country ON region.countryId = country.countryId "
+					+ "LEFT JOIN wine_winegrape ON wine_winegrape.wine = wine.wine AND wine_winegrape.vintage = wine.vintage "
+					+ "LEFT JOIN winegrape ON wine_winegrape.winegrapeId = winegrape.winegrapeId "
+					+ "WHERE wine.wine = ? AND wine.vintage = ?";
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, name.toLowerCase());
@@ -145,7 +159,7 @@ public class Wine extends Model {
 	 * @return The number of rows which have been updated
 	 */
 	public Integer updateWineAvailability(Integer availability) {
-		Integer insertedRows = null;
+		Integer updatedRows = null;
 
 		try {
 			String sql = "UPDATE wine SET availability = ? WHERE wine = ? AND vintage = ?";
@@ -155,13 +169,13 @@ public class Wine extends Model {
 			stmt.setString(2, wine);
 			stmt.setInt(3, vintage);
 
-			insertedRows = stmt.executeUpdate();
+			updatedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
 			Helpers.handleSQLException(ex);
 		}
 
-		return insertedRows;
+		return updatedRows;
 	}
 
 	/**
@@ -173,7 +187,7 @@ public class Wine extends Model {
 	 * @return The number of rows which have been updated
 	 */
 	public Integer updateWinePrice(Float price) {
-		Integer insertedRows = null;
+		Integer updatedRows = null;
 
 		try {
 			String sql = "UPDATE wine SET price = ? WHERE wine = ? AND vintage = ?";
@@ -183,13 +197,13 @@ public class Wine extends Model {
 			stmt.setString(2, wine);
 			stmt.setInt(3, vintage);
 
-			insertedRows = stmt.executeUpdate();
+			updatedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
 			Helpers.handleSQLException(ex);
 		}
 
-		return insertedRows;
+		return updatedRows;
 	}
 
 	/**
@@ -199,7 +213,7 @@ public class Wine extends Model {
 	 * @return The number of rows which have been deleted
 	 */
 	public Integer destroy() {
-		Integer insertedRows = null;
+		Integer updatedRows = null;
 
 		try {
 			String sql = "DELETE FROM wine WHERE wine = ? AND vintage = ?";
@@ -208,12 +222,35 @@ public class Wine extends Model {
 			stmt.setString(1, wine);
 			stmt.setInt(2, vintage);
 
-			insertedRows = stmt.executeUpdate();
+			updatedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
 			Helpers.handleSQLException(ex);
 		}
 
-		return insertedRows;
+		return updatedRows;
+	}
+
+	public String toString() {
+		String output = "Vino:\t\t\t" + wine + "\n" + "Annata:\t\t\t" + vintage.toString() + "\n" + "Prezzo:\t\t\t"
+				+ price.toString() + "\n" + "Bottiglie:\t\t" + availability.toString() + "\n";
+
+		WineWinegrape[] winegrapes = this.winegrapes.toArray(new WineWinegrape[this.winegrapes.size()]);
+
+		if (winefamily != null) {
+			output += winefamily.toString();
+		}
+
+		if (winery != null)
+			output += winery.toString();
+
+		if (winegrapes.length > 0 && winegrapes[0].winegrape.winegrape != null) {
+			output += "\nUvaggio:\n";
+
+			for (int i = 0; i < winegrapes.length; i++)
+				output += "\t" + winegrapes[i].toString();
+		}
+
+		return output;
 	}
 }
