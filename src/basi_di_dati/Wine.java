@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Wine extends Model {
 	public String wine;
 	public Integer vintage;
@@ -36,7 +35,7 @@ public class Wine extends Model {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public String toStringTest() {
 		return "Vino: " + this.wine + "\n" + "Annata: " + this.vintage.toString() + "\n" + "Prezzo: "
 				+ this.price.toString() + "\n" + "Bottiglie: " + this.availability.toString() + "\n" + "wineryId: "
@@ -107,14 +106,13 @@ public class Wine extends Model {
 	 *                     produced
 	 * @param availability An Integer representing how many bottles the wine seller
 	 *                     has
-	 * @param price        A number describing the price of the
-	 *                     bottle
+	 * @param price        A number describing the price of the bottle
 	 * @param wineryId     The ID of the related winery
 	 * @param winefamilyId The ID of the related winefamily
 	 * @return An Integer describing the number of rows which have been created
 	 */
-	public static Integer createWine(String name, Integer vintage, Integer availability, Integer price, Integer wineryId,
-			Integer winefamilyId) {
+	public static Integer createWine(String name, Integer vintage, Integer availability, Integer price,
+			Integer wineryId, Integer winefamilyId) {
 		Integer insertedRows = null;
 
 		try {

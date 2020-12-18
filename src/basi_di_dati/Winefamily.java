@@ -92,8 +92,8 @@ public class Winefamily extends Model {
 	 * @param regionId    The ID of the region of the winefamily's wines
 	 * @return An Integer describing the number of rows which have been created
 	 */
-	public static Integer createWinefamily(String name, Winecolor winecolorId, Winetype winetypeId, Winedenom winedenomId,
-			Integer regionId) {
+	public static Integer createWinefamily(String name, Winecolor winecolorId, Winetype winetypeId,
+			Winedenom winedenomId, Integer regionId) {
 		Integer insertedRows = null;
 
 		try {
