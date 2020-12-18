@@ -2,9 +2,9 @@ package basi_di_dati;
 
 import java.sql.*;
 
-public class Connector {
+public class Connector {	
 	private Connection con;
-
+	
 	public Connector(String db, String user, String password) {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");

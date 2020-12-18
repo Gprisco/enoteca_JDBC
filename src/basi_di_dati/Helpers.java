@@ -3,7 +3,7 @@ package basi_di_dati;
 import java.sql.SQLException;
 
 public class Helpers {
-
+		
 	public static void handleSQLException(SQLException ex) {
 		System.out.println("SQLException: " + ex.getMessage());
 		System.out.println("SQLState: " + ex.getSQLState());

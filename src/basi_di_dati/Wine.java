@@ -1,6 +1,5 @@
 package basi_di_dati;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,20 +8,46 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import basi_di_dati.Models.Wine;
 
-public class WineManager {
-	Connection conn;
+public class Wine extends Model {
+	public String wine;
+	public Integer vintage;
+	public Integer availability;
+	public Integer price;
+	public Integer wineryId;
+	public Integer winefamilyId;
+	public Winefamily winefamily = null;
+	public Winery winery = null;
 
-	public WineManager(Connection conn) {
-		this.conn = conn;
+	public Wine(ResultSet rs, Boolean fetchRelations) {
+		try {
+			this.wine = rs.getString("wine");
+			this.vintage = rs.getInt("vintage");
+			this.availability = rs.getInt("availability");
+			this.price = rs.getInt("price");
+			this.wineryId = rs.getInt("wineryId");
+			this.winefamilyId = rs.getInt("winefamilyId");
+
+			if (fetchRelations) {
+				this.winefamily = new Winefamily(rs);
+				this.winery = new Winery(rs);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public String toStringTest() {
+		return "Vino: " + this.wine + "\n" + "Annata: " + this.vintage.toString() + "\n" + "Prezzo: "
+				+ this.price.toString() + "\n" + "Bottiglie: " + this.availability.toString() + "\n" + "wineryId: "
+				+ this.wineryId.toString() + "\n" + "winefamilyId: " + this.winefamilyId.toString();
 	}
 
 	/**
 	 * 
 	 * @return A ResultSet containing all the rows from the wine table
 	 */
-	public Wine[] getWines() {
+	public static Wine[] getWines() {
 		List<Wine> wines = new ArrayList<Wine>();
 
 		try {
@@ -46,7 +71,7 @@ public class WineManager {
 	 * @param vintage The vintage of the wine to fetch
 	 * @return The Wine fetched from db or null
 	 */
-	public Wine getWine(String name, Integer vintage) {
+	public static Wine getWine(String name, Integer vintage) {
 		Wine wine = null;
 
 		try {
@@ -88,7 +113,7 @@ public class WineManager {
 	 * @param winefamilyId The ID of the related winefamily
 	 * @return An Integer describing the number of rows which have been created
 	 */
-	public Integer createWine(String name, Integer vintage, Integer availability, Integer price, Integer wineryId,
+	public static Integer createWine(String name, Integer vintage, Integer availability, Integer price, Integer wineryId,
 			Integer winefamilyId) {
 		Integer insertedRows = null;
 
@@ -121,7 +146,7 @@ public class WineManager {
 	 *                     saved in the database)
 	 * @return The number of rows which have been updated
 	 */
-	public Integer updateWineAvailability(String wine, Integer vintage, Integer availability) {
+	public Integer updateWineAvailability(Integer availability) {
 		Integer insertedRows = null;
 
 		try {
@@ -149,7 +174,7 @@ public class WineManager {
 	 *                database)
 	 * @return The number of rows which have been updated
 	 */
-	public Integer updateWinePrice(String wine, Integer vintage, Float price) {
+	public Integer updateWinePrice(Float price) {
 		Integer insertedRows = null;
 
 		try {
@@ -175,7 +200,7 @@ public class WineManager {
 	 * @param vintage The vintage of the wine
 	 * @return The number of rows which have been deleted
 	 */
-	public Integer deleteWine(String wine, Integer vintage) {
+	public Integer destroy() {
 		Integer insertedRows = null;
 
 		try {

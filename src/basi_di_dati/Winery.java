@@ -1,6 +1,5 @@
 package basi_di_dati;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,20 +7,29 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import basi_di_dati.Models.*;
+public class Winery extends Model {
+	public Integer wineryId;
+	public String winery;
+	public String address;
+	public String telephone;
 
-public class WineryManager {
-	Connection conn;
+	public Winery(ResultSet rs) {
+		try {
+			this.wineryId = rs.getInt("wineryId");
+			this.winery = rs.getString("winery");
+			this.address = rs.getString("address");
+			this.telephone = rs.getString("telephone");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-	public WineryManager(Connection conn) {
-		this.conn = conn;
 	}
 
 	/**
 	 * 
 	 * @return All the wineries in the database
 	 */
-	public Winery[] getWineries() {
+	public static Winery[] getWineries() {
 		List<Winery> wineries = new ArrayList<Winery>();
 
 		try {
@@ -44,7 +52,7 @@ public class WineryManager {
 	 * @param wineryId The id of the winery to fetch
 	 * @return The winery fetched from the database or null
 	 */
-	public Winery getWinery(Integer wineryId) {
+	public static Winery getWinery(Integer wineryId) {
 		Winery winery = null;
 
 		try {
@@ -73,7 +81,7 @@ public class WineryManager {
 	 * @param telephone The telephone number as a string of the winery to create
 	 * @return The number of rows which have been created
 	 */
-	public Integer createWinery(String winery, String address, String telephone) {
+	public static Integer createWinery(String winery, String address, String telephone) {
 		Integer insertedRows = null;
 
 		try {
@@ -98,7 +106,7 @@ public class WineryManager {
 	 * @param wineryId The id of the winery to delete
 	 * @return The number of rows which have been deleted
 	 */
-	public Integer deleteWinery(Integer wineryId) {
+	public Integer destroy(Integer wineryId) {
 		Integer insertedRows = null;
 
 		try {
@@ -114,6 +122,5 @@ public class WineryManager {
 		}
 
 		return insertedRows;
-
 	}
 }

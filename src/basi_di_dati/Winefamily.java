@@ -1,9 +1,6 @@
 package basi_di_dati;
 
-import basi_di_dati.Models.*;
 import basi_di_dati.Helpers.*;
-
-import java.sql.Connection;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,18 +10,32 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WinefamilyManager {
-	Connection conn;
+public class Winefamily extends Model {
+	public Integer winefamilyId;
+	public String winefamily;
+	public Winecolor winecolor;
+	public Winetype winetype;
+	public Winedenom winedenom;
+	public Integer regionId;
 
-	public WinefamilyManager(Connection conn) {
-		this.conn = conn;
+	public Winefamily(ResultSet rs) {
+		try {
+			this.winefamilyId = rs.getInt("winefamilyId");
+			this.winefamily = rs.getString("winefamily");
+			winecolor = Winecolor.values()[rs.getInt("winecolorId") - 1];
+			winetype = Winetype.values()[rs.getInt("winetypeId") - 1];
+			winedenom = Winedenom.values()[rs.getInt("winedenomId") - 1];
+			this.regionId = rs.getInt("regionId");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * 
 	 * @return ResultSet containing all the rows from winefamily table
 	 */
-	public Winefamily[] getWinefamilies() {
+	public static Winefamily[] getWinefamilies() {
 		Statement stmt = null;
 		ResultSet rs = null;
 
@@ -50,7 +61,7 @@ public class WinefamilyManager {
 	 * @param winefamilyId The ID of the winefamily to fetch
 	 * @return A ResultSet containing one single Winefamily
 	 */
-	public Winefamily getWinefamily(Integer winefamilyId) {
+	public static Winefamily getWinefamily(Integer winefamilyId) {
 		Winefamily winefamily = null;
 
 		try {
@@ -81,7 +92,7 @@ public class WinefamilyManager {
 	 * @param regionId    The ID of the region of the winefamily's wines
 	 * @return An Integer describing the number of rows which have been created
 	 */
-	public Integer createWinefamily(String name, Winecolor winecolorId, Winetype winetypeId, Winedenom winedenomId,
+	public static Integer createWinefamily(String name, Winecolor winecolorId, Winetype winetypeId, Winedenom winedenomId,
 			Integer regionId) {
 		Integer insertedRows = null;
 
@@ -110,7 +121,7 @@ public class WinefamilyManager {
 	 * @param winefamilyId The id of the winefamily to delete
 	 * @return The number of rows which have been deleted
 	 */
-	public Integer deleteWinefamily(Integer winefamilyId) {
+	public Integer destroy() {
 		Integer insertedRows = null;
 
 		try {
