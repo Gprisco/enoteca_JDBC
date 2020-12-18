@@ -54,7 +54,7 @@ public class TestSuite {
 
 		String wineName = "sassicaia";
 		Integer vintage = 2017;
-		Wine.createWine(wineName, vintage, 10, 30, wineries[0].getId(), winefamilies[0].getId());
+		Wine.create(wineName, vintage, 10, 30, wineries[0].getId(), winefamilies[0].getId());
 
 		// Registrazione uvaggio al vino creato
 		System.out.println("\n[*] Registro un uvaggio per il vino appena creato");

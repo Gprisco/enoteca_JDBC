@@ -3,7 +3,6 @@ package basi_di_dati;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,12 +53,16 @@ public class Wine extends Model {
 	 * 
 	 * @return A ResultSet containing all the rows from the wine table
 	 */
-	public static Wine[] getWines() {
+	public static Wine[] getWines(Integer limit) {
 		List<Wine> wines = new ArrayList<Wine>();
 
 		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM wine");
+			String sql = "SELECT * FROM wine LIMIT ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, limit);
+
+			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
 				wines.add(new Wine(rs, false));
@@ -125,8 +128,8 @@ public class Wine extends Model {
 	 * @param winefamilyId The ID of the related winefamily
 	 * @return An Integer describing the number of rows which have been created
 	 */
-	public static Integer createWine(String name, Integer vintage, Integer availability, Integer price,
-			Integer wineryId, Integer winefamilyId) {
+	public static Integer create(String name, Integer vintage, Integer availability, Integer price, Integer wineryId,
+			Integer winefamilyId) {
 		Integer insertedRows = null;
 
 		try {
