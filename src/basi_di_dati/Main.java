@@ -9,7 +9,8 @@ public class Main {
 		String[] options = { "Avvia test", "Aggiungi un Vino", "Ottieni vini dal database",
 				"Cerca un vino nel database", "Crea una winery", "Ottieni Wineries dal database", "Crea una Winefamily",
 				"Ottieni Winefamilies dal database", "Crea una nuova uva", "Ottieni uve dal database",
-				"Registra l'uvaggio di un vino", "Cancella l'uvaggio di un vino" };
+				"Registra l'uvaggio di un vino", "Cancella l'uvaggio di un vino", "Cancella un vino",
+				"Cancella una winefamily", "Cancella una winery" };
 
 		CLI cli = new CLI();
 
@@ -76,6 +77,18 @@ public class Main {
 			}
 			case 12: {
 				cli.wineWinegrapeHandler.handleDestroyWineWinegrapes();
+				break;
+			}
+			case 13: {
+				cli.wineHandler.handleDestroyWine();
+				break;
+			}
+			case 14: {
+				cli.winefamilyHandler.handleDestroyWinefamily();
+				break;
+			}
+			case 15: {
+				cli.wineryHandler.handleDestroyWinery();
 				break;
 			}
 			case 1000: {

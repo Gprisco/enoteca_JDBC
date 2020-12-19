@@ -47,6 +47,7 @@ public class CLI {
 	}
 
 	public class WineHandler {
+
 		public void handleAddWine() {
 			String wine = input("\nNome del vino da aggiungere: ");
 
@@ -137,9 +138,41 @@ public class CLI {
 
 			System.out.println(wine.toString());
 		}
+
+		public void handleDestroyWine() {
+			String wineName = input("\nVino: ");
+			String vintageString = input("Annata: ");
+
+			Integer vintage = -1;
+
+			try {
+				vintage = Integer.parseInt(vintageString);
+
+				if (vintage < 0)
+					throw new NumberFormatException();
+			} catch (NumberFormatException e) {
+				System.out.println("[!] Errore: l'annata deve essere un numero intero positivo");
+				return;
+			}
+
+			loading();
+
+			Wine wine = Wine.getWine(wineName, vintage);
+
+			if (wine == null) {
+				System.out.println("Vino non trovato :(");
+				return;
+			}
+
+			Integer deletedWine = wine.destroy();
+
+			if (deletedWine > 0)
+				System.out.println("[*] Vino eliminato con successo!");
+		}
 	}
 
 	public class WineryHandler {
+
 		public void handleCreateWinery() {
 			String winery = input("\nNome: ");
 			String address = input("\nIndirizzo: ");
@@ -169,9 +202,37 @@ public class CLI {
 				System.out.println("\n[!] Errore: LIMIT deve essere un intero maggiore o uguale a 0");
 			}
 		}
+
+		public void handleDestroyWinery() {
+			String wineryIdString = input("\nID Winery: ");
+
+			try {
+				Integer wineryId = Integer.parseInt(wineryIdString);
+
+				if (wineryId < 0)
+					throw new NumberFormatException();
+
+				loading();
+
+				Winery w = Winery.getWinery(wineryId);
+
+				if (w == null) {
+					System.out.println("[!] Questa winery non  esiste :(");
+					return;
+				}
+
+				Integer deletedWinery = w.destroy();
+
+				if (deletedWinery > 0)
+					System.out.println("[*] Winery e relativi vini eliminati con successo!");
+			} catch (NumberFormatException e) {
+				System.out.println("\n[!] Errore: wineryId deve essere un intero maggiore di 0");
+			}
+		}
 	}
 
 	public class WinefamilyHandler {
+
 		public void handleCreateWinefamily() {
 			String winefamily = input("\nNome: ");
 
@@ -230,6 +291,34 @@ public class CLI {
 			} catch (NumberFormatException e) {
 				System.out.println("\n[!] Errore: LIMIT deve essere un intero maggiore o uguale a 0");
 			}
+		}
+
+		public void handleDestroyWinefamily() {
+			String winefamilyIdString = input("\nID Winefamily: ");
+
+			try {
+				Integer winefamilyId = Integer.parseUnsignedInt(winefamilyIdString);
+
+				if (winefamilyId < 1)
+					throw new NumberFormatException();
+
+				loading();
+
+				Winefamily wf = Winefamily.getWinefamily(winefamilyId);
+
+				if (wf == null) {
+					System.out.println("[!] Questa winefamily non esiste!");
+					return;
+				}
+
+				Integer deletedWinefamily = wf.destroy();
+
+				if (deletedWinefamily > 0)
+					System.out.println("[*] Winefamily e relativi vini eliminati con successo");
+			} catch (NumberFormatException e) {
+				System.out.println("\n[!] Errore: winefamilyId deve essere un intero maggiore di 0");
+			}
+
 		}
 	}
 
