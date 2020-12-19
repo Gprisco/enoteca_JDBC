@@ -3,6 +3,8 @@ package basi_di_dati;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WineWinegrape extends Model {
 	private Wine wine;
@@ -17,6 +19,35 @@ public class WineWinegrape extends Model {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 
+	 * @param wine    The wine of which to get the winegrapes
+	 * @param vintage The vintage of the wine of which to get the winegrapes
+	 * @return The winegrapes of the wine
+	 */
+	public static WineWinegrape[] getWineWinegrapes(String wine, Integer vintage) {
+		List<WineWinegrape> winegrapes = new ArrayList<WineWinegrape>();
+
+		try {
+			String sql = "SELECT * FROM wine_winegrape WHERE wine = ? AND vintage = ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, wine);
+			stmt.setInt(2, vintage);
+
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				winegrapes.add(new WineWinegrape(rs));
+			}
+		} catch (SQLException ex) {
+			// handle any errors
+			Helpers.handleSQLException(ex);
+		}
+
+		return winegrapes.toArray(new WineWinegrape[winegrapes.size()]);
 	}
 
 	/**
@@ -43,7 +74,7 @@ public class WineWinegrape extends Model {
 			insertedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
-			Helpers.handleSQLException(ex);
+			return Helpers.handleSQLException(ex);
 		}
 
 		return insertedRows;
@@ -61,13 +92,13 @@ public class WineWinegrape extends Model {
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, winegrape.getId());
-			stmt.setString(2, wine.getWine());
+			stmt.setString(2, wine.getWineName());
 			stmt.setInt(3, wine.getVintage());
 
 			deletedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
-			Helpers.handleSQLException(ex);
+			return Helpers.handleSQLException(ex);
 		}
 
 		return deletedRows;

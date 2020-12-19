@@ -3,7 +3,6 @@ package basi_di_dati;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +27,16 @@ public class Winegrape extends Model {
 	 * 
 	 * @return An array of all the winegrapes in the database
 	 */
-	public static Winegrape[] getWinegrapes() {
+	public static Winegrape[] getWinegrapes(Integer limit) {
 		List<Winegrape> winegrapes = new ArrayList<Winegrape>();
 
 		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM winegrape ORDER BY winegrapeId DESC LIMIT 3");
+			String sql = "SELECT * FROM winegrape ORDER BY winegrapeId DESC LIMIT ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, limit);
+
+			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
 				winegrapes.add(new Winegrape(rs));
@@ -63,7 +66,7 @@ public class Winegrape extends Model {
 			insertedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
-			Helpers.handleSQLException(ex);
+			return Helpers.handleSQLException(ex);
 		}
 
 		return insertedRows;
@@ -85,7 +88,7 @@ public class Winegrape extends Model {
 			deletedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
-			Helpers.handleSQLException(ex);
+			return Helpers.handleSQLException(ex);
 		}
 
 		return deletedRows;

@@ -4,10 +4,12 @@ import java.sql.SQLException;
 
 public class Helpers {
 
-	public static void handleSQLException(SQLException ex) {
+	public static Integer handleSQLException(SQLException ex) {
 		System.out.println("SQLException: " + ex.getMessage());
 		System.out.println("SQLState: " + ex.getSQLState());
 		System.out.println("VendorError: " + ex.getErrorCode());
+
+		return 0;
 	}
 
 	public enum Winecolor {

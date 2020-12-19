@@ -16,7 +16,7 @@ public class TestSuite {
 		Winegrape.create(winegrapeName);
 
 		System.out.println("\n[*] Stampo a video le ultime 3 uve inserite...");
-		Winegrape[] winegrapes = Winegrape.getWinegrapes();
+		Winegrape[] winegrapes = Winegrape.getWinegrapes(3);
 
 		for (int i = 0; i < winegrapes.length; i++)
 			System.out.println(winegrapes[i].toString());

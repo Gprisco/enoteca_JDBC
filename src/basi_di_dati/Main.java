@@ -90,6 +90,34 @@ public class Main {
 		}
 	}
 
+	public static void handleGetWine(BufferedReader keyBR) {
+		String wineName = input("\nVino: ", keyBR);
+		String vintageString = input("Annata: ", keyBR);
+
+		Integer vintage = -1;
+
+		try {
+			vintage = Integer.parseInt(vintageString);
+
+			if (vintage < 0)
+				throw new NumberFormatException();
+		} catch (NumberFormatException e) {
+			System.out.println("[!] Errore: l'annata deve essere un numero intero positivo");
+			return;
+		}
+
+		loading();
+
+		Wine wine = Wine.getWine(wineName, vintage);
+
+		if (wine == null) {
+			System.out.println("Vino non trovato :(");
+			return;
+		}
+
+		System.out.println(wine.toString());
+	}
+
 	public static void handleCreateWinery(BufferedReader keyBR) {
 		String winery = input("\nNome: ", keyBR);
 		String address = input("\nIndirizzo: ", keyBR);
@@ -151,6 +179,7 @@ public class Main {
 		} catch (NumberFormatException e) {
 			System.out.println(
 					"\n[!] Errore: winecolorId, winetypeId, winedenomId e regionId devono essere interi maggiori o uguali a 1 e opzioni valide");
+			return;
 		}
 
 		loading();
@@ -179,15 +208,143 @@ public class Main {
 		}
 	}
 
+	public static void handleCreateWinegrape(BufferedReader keyBR) {
+		String winegrape = input("\nNome: ", keyBR);
+
+		loading();
+
+		Integer createdWinegrape = Winegrape.create(winegrape);
+
+		if (createdWinegrape > 0)
+			System.out.println("\n[*] Uva creata con successo");
+	}
+
+	public static void handleGetWinegrapes(BufferedReader keyBR) {
+		String limitString = input("\nQuante righe vuoi leggere? (LIMIT): ", keyBR);
+
+		try {
+			Integer limit = Integer.parseUnsignedInt(limitString);
+
+			loading();
+
+			Winegrape[] winegrapes = Winegrape.getWinegrapes(limit);
+
+			for (int i = 0; i < winegrapes.length; i++)
+				System.out.println(winegrapes[i].toString());
+		} catch (NumberFormatException e) {
+			System.out.println("\n[!] Errore: LIMIT deve essere un intero maggiore o uguale a 0");
+			return;
+		}
+	}
+
+	public static void handleCreateWineWinegrapes(BufferedReader keyBR) {
+		String wineName = input("\nVino: ", keyBR);
+		String vintageString = input("Annata: ", keyBR);
+
+		Integer vintage = -1;
+
+		try {
+			vintage = Integer.parseInt(vintageString);
+
+			if (vintage < 0)
+				throw new NumberFormatException();
+		} catch (NumberFormatException e) {
+			System.out.println("[!] Errore: l'annata deve essere un numero intero positivo");
+			return;
+		}
+
+		loading();
+
+		Wine wine = Wine.getWine(wineName, vintage);
+
+		if (wine == null) {
+			System.out.println("[!] Questo vino non esiste, prova con un altro o aggiungilo prima!");
+			return;
+		}
+
+		WineWinegrape[] winegrapes = WineWinegrape.getWineWinegrapes(wineName, vintage);
+
+		Integer sum = 0;
+		for (int i = 0; i < winegrapes.length; i++)
+			sum += winegrapes[i].percentage;
+
+		if (sum == 100) {
+			System.out.println(
+					"[!] Il vino ha già un uvaggio completo registrato, se vuoi aggiornarlo cancella prima il precedente");
+			return;
+		}
+
+		String winegrapeIdString = input("\nID Uva da aggiungere: ", keyBR);
+		String percentageString = input("Percentuale: ", keyBR);
+
+		Integer winegrapeId = -1;
+		Integer percentage = -1;
+
+		try {
+			winegrapeId = Integer.parseInt(winegrapeIdString);
+			percentage = Integer.parseInt(percentageString);
+
+		} catch (NumberFormatException e) {
+			System.out.println("[!] Errore: ID Uva e Percentuale devono essere numeri interi positivi");
+			return;
+		}
+
+		if (percentage + sum > 100) {
+			System.out.println("[!] Errore: la somma delle percentuali delle uve di questo vino supera il 100%");
+			return;
+		}
+
+		loading();
+
+		Integer createdWineWinegrape = WineWinegrape.create(wineName, vintage, winegrapeId, percentage);
+
+		if (createdWineWinegrape > 0)
+			System.out.println("[*] Uvaggio registrato con successo!");
+	}
+
+	public static void handleDestroyWineWinegrapes(BufferedReader keyBR) {
+		String wineName = input("\nVino: ", keyBR);
+		String vintageString = input("Annata: ", keyBR);
+
+		Integer vintage = -1;
+
+		try {
+			vintage = Integer.parseInt(vintageString);
+
+			if (vintage < 0)
+				throw new NumberFormatException();
+		} catch (NumberFormatException e) {
+			System.out.println("[!] Errore: l'annata deve essere un numero intero positivo");
+			return;
+		}
+
+		loading();
+
+		Wine wine = Wine.getWine(wineName, vintage);
+
+		if (wine == null) {
+			System.out.println("[!] Questo vino non esiste, prova con un altro o aggiungilo prima!");
+			return;
+		}
+
+		WineWinegrape[] winegrapes = WineWinegrape.getWineWinegrapes(wineName, vintage);
+
+		for (int i = 0; i < winegrapes.length; i++)
+			winegrapes[i].destroy();
+
+		System.out.println("[*] Uvaggio eliminato con successo!");
+	}
+
 	public static void main(String[] args) {
 		InputStreamReader keyIS;
 		BufferedReader keyBR;
 		Integer i = 0;
 		String choice = null;
 
-		String[] options = { "1 - Avvia test", "2 - Aggiungi un Vino", "3 - Ottieni vini dal database",
-				"4 - Crea una winery", "5 - Ottieni Wineries dal database", "6 - Crea una Winefamily",
-				"7 - Ottieni Winefamilies dal database", "1000 - Esci" };
+		String[] options = { "Avvia test", "Aggiungi un Vino", "Ottieni vini dal database",
+				"Cerca un vino nel database", "Crea una winery", "Ottieni Wineries dal database", "Crea una Winefamily",
+				"Ottieni Winefamilies dal database", "Crea una nuova uva", "Ottieni uve dal database",
+				"Registra l'uvaggio di un vino", "Cancella l'uvaggio di un vino" };
 
 		keyIS = new InputStreamReader(System.in);
 		keyBR = new BufferedReader(keyIS);
@@ -196,7 +353,9 @@ public class Main {
 			System.out.println("\nOperazioni disponibili:");
 
 			for (Integer j = 0; j < options.length; j++)
-				System.out.println("\t" + options[j]);
+				System.out.println("\t" + Integer.toString(j + 1) + " - " + options[j]);
+
+			System.out.println("\n\t1000 - Esci");
 
 			choice = input("\nSeleziona un'operazione: ", keyBR);
 
@@ -220,19 +379,39 @@ public class Main {
 				break;
 			}
 			case 4: {
-				handleCreateWinery(keyBR);
+				handleGetWine(keyBR);
 				break;
 			}
 			case 5: {
-				handleGetWineries(keyBR);
+				handleCreateWinery(keyBR);
 				break;
 			}
 			case 6: {
-				handleCreateWinefamily(keyBR);
+				handleGetWineries(keyBR);
 				break;
 			}
 			case 7: {
+				handleCreateWinefamily(keyBR);
+				break;
+			}
+			case 8: {
 				handleGetWinefamilies(keyBR);
+				break;
+			}
+			case 9: {
+				handleCreateWinegrape(keyBR);
+				break;
+			}
+			case 10: {
+				handleGetWinegrapes(keyBR);
+				break;
+			}
+			case 11: {
+				handleCreateWineWinegrapes(keyBR);
+				break;
+			}
+			case 12: {
+				handleDestroyWineWinegrapes(keyBR);
 				break;
 			}
 			case 1000: {

@@ -18,6 +18,16 @@ public class Wine extends Model {
 	public Winery winery = null;
 	private List<WineWinegrape> winegrapes = new ArrayList<WineWinegrape>();
 
+	public static String wineQuery = "SELECT * FROM wine " + "INNER JOIN winery ON winery.wineryId = wine.wineryId "
+			+ "INNER JOIN winefamily ON winefamily.winefamilyId = wine.winefamilyId "
+			+ "INNER JOIN winecolor ON winecolor.winecolorId = winefamily.winecolorId "
+			+ "INNER JOIN winetype ON winetype.winetypeId = winefamily.winetypeId "
+			+ "INNER JOIN winedenom ON winedenom.winedenomId = winefamily.winedenomId "
+			+ "INNER JOIN region ON region.regionId = winefamily.regionId "
+			+ "INNER JOIN country ON region.countryId = country.countryId "
+			+ "LEFT JOIN wine_winegrape ON wine_winegrape.wine = wine.wine AND wine_winegrape.vintage = wine.vintage "
+			+ "LEFT JOIN winegrape ON wine_winegrape.winegrapeId = winegrape.winegrapeId ";
+
 	public Wine(ResultSet rs, Boolean fetchRelations) {
 		try {
 			this.wine = rs.getString("wine");
@@ -37,7 +47,7 @@ public class Wine extends Model {
 		}
 	}
 
-	public String getWine() {
+	public String getWineName() {
 		return wine;
 	}
 
@@ -57,15 +67,7 @@ public class Wine extends Model {
 		List<Wine> wines = new ArrayList<Wine>();
 
 		try {
-			String sql = "SELECT * FROM wine " + "INNER JOIN winery ON winery.wineryId = wine.wineryId "
-					+ "INNER JOIN winefamily ON winefamily.winefamilyId = wine.winefamilyId "
-					+ "INNER JOIN winecolor ON winecolor.winecolorId = winefamily.winecolorId "
-					+ "INNER JOIN winetype ON winetype.winetypeId = winefamily.winetypeId "
-					+ "INNER JOIN winedenom ON winedenom.winedenomId = winefamily.winedenomId "
-					+ "INNER JOIN region ON region.regionId = winefamily.regionId "
-					+ "INNER JOIN country ON region.countryId = country.countryId "
-					+ "LEFT JOIN wine_winegrape ON wine_winegrape.wine = wine.wine AND wine_winegrape.vintage = wine.vintage "
-					+ "LEFT JOIN winegrape ON wine_winegrape.winegrapeId = winegrape.winegrapeId LIMIT ?";
+			String sql = wineQuery + "LIMIT ?";
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, limit);
@@ -96,16 +98,7 @@ public class Wine extends Model {
 			// Faccio un'intersezione con tutte le tabell tranne con winegrape con cui
 			// faccio un left join al fine di avere comunque tutti i dati del vino anche se
 			// non ha l'uvaggio registrato
-			String sql = "SELECT * FROM wine " + "INNER JOIN winery ON winery.wineryId = wine.wineryId "
-					+ "INNER JOIN winefamily ON winefamily.winefamilyId = wine.winefamilyId "
-					+ "INNER JOIN winecolor ON winecolor.winecolorId = winefamily.winecolorId "
-					+ "INNER JOIN winetype ON winetype.winetypeId = winefamily.winetypeId "
-					+ "INNER JOIN winedenom ON winedenom.winedenomId = winefamily.winedenomId "
-					+ "INNER JOIN region ON region.regionId = winefamily.regionId "
-					+ "INNER JOIN country ON region.countryId = country.countryId "
-					+ "LEFT JOIN wine_winegrape ON wine_winegrape.wine = wine.wine AND wine_winegrape.vintage = wine.vintage "
-					+ "LEFT JOIN winegrape ON wine_winegrape.winegrapeId = winegrape.winegrapeId "
-					+ "WHERE wine.wine = ? AND wine.vintage = ?";
+			String sql = wineQuery + "WHERE wine.wine = ? AND wine.vintage = ?";
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, name.toLowerCase());
@@ -155,7 +148,7 @@ public class Wine extends Model {
 			insertedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
-			Helpers.handleSQLException(ex);
+			return Helpers.handleSQLException(ex);
 		}
 
 		return insertedRows;
@@ -183,7 +176,7 @@ public class Wine extends Model {
 			updatedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
-			Helpers.handleSQLException(ex);
+			return Helpers.handleSQLException(ex);
 		}
 
 		return updatedRows;
@@ -211,7 +204,7 @@ public class Wine extends Model {
 			updatedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
-			Helpers.handleSQLException(ex);
+			return Helpers.handleSQLException(ex);
 		}
 
 		return updatedRows;
@@ -236,7 +229,7 @@ public class Wine extends Model {
 			updatedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
-			Helpers.handleSQLException(ex);
+			return Helpers.handleSQLException(ex);
 		}
 
 		return updatedRows;

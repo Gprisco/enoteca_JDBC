@@ -102,7 +102,7 @@ public class Winery extends Model {
 			insertedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
-			Helpers.handleSQLException(ex);
+			return Helpers.handleSQLException(ex);
 		}
 
 		return insertedRows;
@@ -125,7 +125,7 @@ public class Winery extends Model {
 			deletedRows = stmt.executeUpdate();
 		} catch (SQLException ex) {
 			// handle any errors
-			Helpers.handleSQLException(ex);
+			return Helpers.handleSQLException(ex);
 		}
 
 		return deletedRows;
