@@ -3,7 +3,6 @@ package basi_di_dati;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class Winery extends Model {
 		}
 
 	}
-	
+
 	public Integer getId() {
 		return wineryId;
 	}
@@ -33,12 +32,16 @@ public class Winery extends Model {
 	 * 
 	 * @return All the wineries in the database
 	 */
-	public static Winery[] getWineries() {
+	public static Winery[] getWineries(Integer limit) {
 		List<Winery> wineries = new ArrayList<Winery>();
 
 		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM winery ORDER BY wineryId DESC LIMIT 3");
+			String sql = "SELECT * FROM winery ORDER BY wineryId DESC LIMIT ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, limit);
+
+			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
 				wineries.add(new Winery(rs));
@@ -129,7 +132,7 @@ public class Winery extends Model {
 	}
 
 	public String toString() {
-		return "\n\nwineryId:\t\t" + wineryId.toString() + "\nWinery:\t\t\t" + winery + "\nIndirizzo:\t\t" + address
+		return "\nwineryId:\t\t" + wineryId.toString() + "\nWinery:\t\t\t" + winery + "\nIndirizzo:\t\t" + address
 				+ "\nTelefono:\t\t" + telephone;
 	}
 }

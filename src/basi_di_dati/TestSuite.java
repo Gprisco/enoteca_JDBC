@@ -28,7 +28,7 @@ public class TestSuite {
 		Winefamily.create(winefamilyName, Winecolor.Rosso, Winetype.Passito, Winedenom.DOCG, 1);
 
 		System.out.println("\n[*] Stampo a video le ultime 3 famiglie inserite...");
-		Winefamily[] winefamilies = Winefamily.getWinefamilies();
+		Winefamily[] winefamilies = Winefamily.getWinefamilies(3);
 
 		for (int i = 0; i < winefamilies.length; i++)
 			System.out.println(winefamilies[i].toString());
@@ -43,7 +43,7 @@ public class TestSuite {
 		Winery.create(wineryName, address, telephone);
 
 		System.out.println("\n[*] Stampo a video le ultime 3 famiglie inserite...");
-		Winery[] wineries = Winery.getWineries();
+		Winery[] wineries = Winery.getWineries(3);
 
 		for (int i = 0; i < wineries.length; i++)
 			System.out.println(wineries[i].toString());

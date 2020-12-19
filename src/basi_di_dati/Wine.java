@@ -57,7 +57,15 @@ public class Wine extends Model {
 		List<Wine> wines = new ArrayList<Wine>();
 
 		try {
-			String sql = "SELECT * FROM wine LIMIT ?";
+			String sql = "SELECT * FROM wine " + "INNER JOIN winery ON winery.wineryId = wine.wineryId "
+					+ "INNER JOIN winefamily ON winefamily.winefamilyId = wine.winefamilyId "
+					+ "INNER JOIN winecolor ON winecolor.winecolorId = winefamily.winecolorId "
+					+ "INNER JOIN winetype ON winetype.winetypeId = winefamily.winetypeId "
+					+ "INNER JOIN winedenom ON winedenom.winedenomId = winefamily.winedenomId "
+					+ "INNER JOIN region ON region.regionId = winefamily.regionId "
+					+ "INNER JOIN country ON region.countryId = country.countryId "
+					+ "LEFT JOIN wine_winegrape ON wine_winegrape.wine = wine.wine AND wine_winegrape.vintage = wine.vintage "
+					+ "LEFT JOIN winegrape ON wine_winegrape.winegrapeId = winegrape.winegrapeId LIMIT ?";
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, limit);
@@ -65,7 +73,7 @@ public class Wine extends Model {
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				wines.add(new Wine(rs, false));
+				wines.add(new Wine(rs, true));
 			}
 		} catch (SQLException ex) {
 			// handle any errors
@@ -241,11 +249,11 @@ public class Wine extends Model {
 		WineWinegrape[] winegrapes = this.winegrapes.toArray(new WineWinegrape[this.winegrapes.size()]);
 
 		if (winefamily != null) {
-			output += winefamily.toString();
+			output += winefamily.toString() + "\n";
 		}
 
 		if (winery != null)
-			output += winery.toString();
+			output += winery.toString() + "\n";
 
 		if (winegrapes.length > 0 && winegrapes[0].winegrape.winegrape != null) {
 			output += "\nUvaggio:\n";
@@ -254,6 +262,6 @@ public class Wine extends Model {
 				output += "\t" + winegrapes[i].toString();
 		}
 
-		return output;
+		return output + "\n";
 	}
 }

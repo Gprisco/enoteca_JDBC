@@ -5,7 +5,6 @@ import basi_di_dati.Helpers.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,7 @@ public class Winefamily extends Model {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public Integer getId() {
 		return winefamilyId;
 	}
@@ -39,15 +38,17 @@ public class Winefamily extends Model {
 	 * 
 	 * @return ResultSet containing all the rows from winefamily table
 	 */
-	public static Winefamily[] getWinefamilies() {
-		Statement stmt = null;
-		ResultSet rs = null;
+	public static Winefamily[] getWinefamilies(Integer limit) {
 
 		List<Winefamily> winefamilies = new ArrayList<Winefamily>();
 
 		try {
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM winefamily ORDER BY winefamilyId DESC LIMIT 3");
+			String sql = "SELECT * FROM winefamily ORDER BY winefamilyId DESC LIMIT ?";
+
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, limit);
+
+			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
 				winefamilies.add(new Winefamily(rs));
@@ -96,8 +97,8 @@ public class Winefamily extends Model {
 	 * @param regionId    The ID of the region of the winefamily's wines
 	 * @return An Integer describing the number of rows which have been created
 	 */
-	public static Integer create(String name, Winecolor winecolorId, Winetype winetypeId,
-			Winedenom winedenomId, Integer regionId) {
+	public static Integer create(String name, Winecolor winecolorId, Winetype winetypeId, Winedenom winedenomId,
+			Integer regionId) {
 		Integer insertedRows = null;
 
 		try {
@@ -144,7 +145,7 @@ public class Winefamily extends Model {
 	}
 
 	public String toString() {
-		return "\nwinefamilyId:\t\t" + winefamilyId.toString() + "\nWinefamily:\t\t" + winefamily + "\nColore:\t\t\t" + winecolor
-				+ "\nTipologia:\t\t" + winetype + "\nDenominazione:\t\t" + winedenom;
+		return "\nwinefamilyId:\t\t" + winefamilyId.toString() + "\nWinefamily:\t\t" + winefamily + "\nColore:\t\t\t"
+				+ winecolor + "\nTipologia:\t\t" + winetype + "\nDenominazione:\t\t" + winedenom;
 	}
 }
