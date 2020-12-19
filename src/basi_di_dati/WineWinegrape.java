@@ -31,7 +31,10 @@ public class WineWinegrape extends Model {
 		List<WineWinegrape> winegrapes = new ArrayList<WineWinegrape>();
 
 		try {
-			String sql = "SELECT * FROM wine_winegrape WHERE wine = ? AND vintage = ?";
+			String sql = "SELECT * FROM wine_winegrape "
+					+ "INNER JOIN winegrape ON winegrape.winegrapeId = wine_winegrape.winegrapeId "
+					+ "INNER JOIN wine ON wine.wine = wine_winegrape.wine AND wine.vintage = wine_winegrape.vintage "
+					+ "WHERE wine_winegrape.wine = ? AND wine_winegrape.vintage = ?";
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, wine);
